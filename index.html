@@ -1,0 +1,58 @@
+<button id="letsride">let's ride</button>
+<script>
+
+"use strict";
+
+function printout(result) {
+  let decoder = new TextDecoder();
+  console.log('Received: ' + decoder.decode(result.data));
+}
+
+document.querySelector("#letsride").onclick = function() {
+
+  navigator.usb.requestDevice({ filters: [{ vendorId: 0x534c }] })
+  .then(prod => {
+    return prod.open().then(() => {
+      return prod.reset();
+    }).then(() => {
+      return prod.selectConfiguration(1);
+    }).then(() => {
+      return prod.releaseInterface(2);
+    }).then(() => {
+      console.log(prod);
+      return prod.claimInterface(2);
+    }).then(() => {
+      console.log("will transfer initialize");
+      return prod.transferOut(2, new Uint8Array([63, 35, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]))
+
+    }).then(() => {
+      return prod.transferIn(2, 64).then(printout);
+    }).then(() => {
+      return prod.transferIn(2, 64).then(printout);
+    }).then(() => {
+      return prod.transferIn(2, 64).then(printout);
+    }).then(() => {
+      return prod.transferIn(2, 64).then(printout);
+    }).then(() => {
+      return prod.transferIn(2, 64).then(printout);
+    }).then(() => {
+      return prod.transferIn(2, 64).then(printout);
+    }).then(() => {
+      return prod.transferIn(2, 64).then(printout);
+    }).then(() => {
+      return prod.transferIn(2, 64).then(printout);
+    }).then(() => {
+      return prod.transferIn(2, 64).then(printout);
+    }).then(() => {
+      return prod.releaseInterface(2);
+    }).then(() => {
+      return prod.reset();
+    }).then(() => {
+      console.log(prod);
+    }).catch((e) => {
+      console.error(e);
+    });
+  });
+};
+</script>
