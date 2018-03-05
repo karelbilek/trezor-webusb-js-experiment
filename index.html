@@ -1,57 +1,87 @@
-<button id="letsride">let's ride</button>
+Vendor ID (4617 for T2):<br>
+<input id="vendor" type="number" value="21324">
+<br>
+Configuration ID:<br>
+<input id="configuration" type="number" value="1"><br>
+Interface ID:<br>
+<input id="interface" type="number" value="0"><br>
+Endpoint ID:<br>
+<input id="endpoint" type="number" value="1"><br>
+<br><br>
+
+
+<button id="letsride">RUN</button>
+<br><br>
+<textarea id="outp" rows="20" cols="50">(result will be here)</textarea>
 <script>
 
 "use strict";
 
 function printout(result) {
-  let decoder = new TextDecoder();
-  console.log('Received: ' + decoder.decode(result.data));
+  var outp = document.querySelector("#outp");
+  if (outp.value === "WORKING") {
+    outp.value = "";
+  }
+  if (result instanceof Error) {
+    outp.value = "Error:\n";
+    outp.value += result.toString();
+  } else {
+    let decoder = new TextDecoder();
+    outp.value += decoder.decode(result.data);
+  }
 }
 
 document.querySelector("#letsride").onclick = function() {
+  var vendorId = document.querySelector("#vendor").value                                                 
+  var configurationId = document.querySelector("#configuration").value                                   
+  var interfaceId = document.querySelector("#interface").value                                           
+  var endpointId = document.querySelector("#endpoint").value                                             
 
-  navigator.usb.requestDevice({ filters: [{ vendorId: 0x534c }] })
-  .then(prod => {
+  document.querySelector("#outp").value = "WORKING";                                                     
+
+  navigator.usb.requestDevice({ filters: [{ vendorId }] })                                               
+
+  .then(prod => {                                   
     return prod.open().then(() => {
       return prod.reset();
     }).then(() => {
-      return prod.selectConfiguration(1);
+      console.log(prod);
+      return prod.selectConfiguration(configurationId);
     }).then(() => {
-      return prod.releaseInterface(2);
+      return prod.releaseInterface(interfaceId);
     }).then(() => {
       console.log(prod);
-      return prod.claimInterface(2);
+      return prod.claimInterface(interfaceId);
     }).then(() => {
-      console.log("will transfer initialize");
-      return prod.transferOut(1, new Uint8Array([63, 35, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+      return prod.transferOut(endpointId, new Uint8Array([63, 35, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]))
 
     }).then(() => {
-      return prod.transferIn(1, 64).then(printout);
+      console.log("did transfer initialize");
+      return prod.transferIn(endpointId, 64).then(printout);
     }).then(() => {
-      return prod.transferIn(1, 64).then(printout);
+      return prod.transferIn(endpointId, 64).then(printout);
     }).then(() => {
-      return prod.transferIn(1, 64).then(printout);
+      return prod.transferIn(endpointId, 64).then(printout);
     }).then(() => {
-      return prod.transferIn(1, 64).then(printout);
+      return prod.transferIn(endpointId, 64).then(printout);
     }).then(() => {
-      return prod.transferIn(1, 64).then(printout);
+      return prod.transferIn(endpointId, 64).then(printout);
     }).then(() => {
-      return prod.transferIn(1, 64).then(printout);
+      return prod.transferIn(endpointId, 64).then(printout);
     }).then(() => {
-      return prod.transferIn(1, 64).then(printout);
+      return prod.transferIn(endpointId, 64).then(printout);
     }).then(() => {
-      return prod.transferIn(1, 64).then(printout);
+      return prod.transferIn(endpointId, 64).then(printout);
     }).then(() => {
-      return prod.transferIn(1, 64).then(printout);
+      return prod.transferIn(endpointId, 64).then(printout);
     }).then(() => {
-      return prod.releaseInterface(2);
+      return prod.releaseInterface(interfaceId);
     }).then(() => {
       return prod.reset();
-    }).then(() => {
-      console.log(prod);
     }).catch((e) => {
-      console.error(e);
+            console.log(e)
+      printout(e);
     });
   });
 };
